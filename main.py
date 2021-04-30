@@ -1,35 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-
-def draw_histogram(bins):
-
-    # example data
-    mu = 100  # mean of distribution
-    sigma = 15  # standard deviation of distribution
-    x = mu + sigma * np.random.randn(15623)
-
-    num_bins = bins
-
-    fig, ax = plt.subplots()
-
-    # the histogram of the data
-    n, bins, patches = ax.hist(x, num_bins, density=True)
-
-    degree_sign = u'\N{DEGREE SIGN}'
-
-    # add a 'best fit' line
-    y = ((1 / (np.sqrt(2 * np.pi) * sigma)) *
-         np.exp(-0.5 * (1 / sigma * (bins - mu)) ** 2))
-    print(type(y))
-    ax.plot(bins, y, '-')
-    ax.set_xlabel('Temperature [' + degree_sign + 'C]')
-    ax.set_ylabel('Frequency')
-    ax.set_title(r'Temperature in Tokyo in August 2010')
-
-    # Tweak spacing to prevent clipping of ylabel
-    fig.tight_layout()
-    plt.show()
+from itertools import accumulate
+import pandas as pd
+import seaborn as sns
 
 
 def read_file(file, column):
@@ -54,14 +27,29 @@ def count_frequency(my_list):
     return count
 
 
-def set_values():
-    temp_list = read_file("h201008", 8)
-    min_temp = min(temp_list)
-    max_temp = max(temp_list)
+def draw():
+    dictionary = count_frequency(read_file("as5.txt", 8))
+    x = np.array(list(dictionary.keys()))
+    y = np.array(list(dictionary.values()))
+    cum = list(accumulate(y))
+    degree_sign = u'\N{DEGREE SIGN}'
+    x_key = 'Temperature [' + degree_sign + 'C]'
+    y_key = 'Frequency'
+
+    data = {x_key: x, y_key: y, 'Cumulative Frequency': cum}
+    df = pd.DataFrame(data)
+    plt.title('Temperature in Tokyo in August 2010')
+
+    color = 'tab:green'
+    ax1 = sns.barplot(x=x_key, y=y_key, data=df, palette='summer')
+    ax1.tick_params(axis='y')
+
+    ax2 = ax1.twinx()
+    color = 'tab:red'
+
+    ax2 = sns.lineplot(x=x_key, y='Cumulative Frequency', data=df, sort=False, color=color)
+    ax2.tick_params(axis='y', color=color)
+    plt.show()
 
 
-# dictionary = count_frequency(read_file("as5.txt", 8))
-# plt.bar(list(dictionary.keys()), dictionary.values(), color='g')
-# plt.show()
-
-draw_histogram(20)
+draw()
