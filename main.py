@@ -27,11 +27,18 @@ def count_frequency(my_list):
     return count
 
 
-def draw():
+def draw(limit: bool):
     dictionary = count_frequency(read_file("as5.txt", 8))
     x = np.array(list(dictionary.keys()))
     y = np.array(list(dictionary.values()))
+    if limit:
+        x = x[:45]
+        y = y[:45]
+
     cum = list(accumulate(y))
+    if limit:
+        cum = cum[:45]
+
     degree_sign = u'\N{DEGREE SIGN}'
     x_key = 'Temperature [' + degree_sign + 'C]'
     y_key = 'Frequency'
@@ -52,4 +59,4 @@ def draw():
     plt.show()
 
 
-draw()
+draw(True)
