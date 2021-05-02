@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 from itertools import accumulate
 import pandas as pd
 import seaborn as sns
+import os
+
+from database import DatabaseUtil
 
 
 def read_file(file, column):
@@ -61,4 +64,27 @@ def draw(limit: bool, limit_value):
     plt.show()
 
 
-draw(True, 45)
+# draw(True, 45)
+
+
+def setup_db():
+    date = read_file("as5.txt", 3)
+    temp = read_file("as5.txt", 8)
+    hour = read_file("as5.txt", 4)
+    db = DatabaseUtil("test.db")
+    if not os.path.isfile("test.db"):
+        db.create_db()
+
+        i = 0
+        while i < len(date):
+            temp_id = '8' + date[i] + hour[i] + temp[i]
+            db.insert_temp_data(temp_id, date[i], temp[i], hour[i])
+            i += 1
+
+        unique_date = set(date)
+        for day in unique_date:
+            db.insert_processed_data(day, str(db.get_max_temp(day)), str(db.get_min_temp(day)),
+                                     str(round(db.get_avg_temp(day), 2)))
+
+
+setup_db()
