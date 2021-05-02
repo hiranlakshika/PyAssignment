@@ -1,4 +1,5 @@
 import sqlite3
+import pandas as pd
 
 
 class DatabaseUtil:
@@ -62,3 +63,9 @@ class DatabaseUtil:
 
         for c in cursor:
             return c[0]
+
+    def get_processed_df(self):
+        conn = sqlite3.connect(self.db_name)
+        df = pd.read_sql_query("SELECT * FROM PROCESSED_TEMP", conn)
+        conn.close()
+        return df

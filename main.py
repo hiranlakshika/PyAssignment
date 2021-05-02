@@ -1,9 +1,10 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import os
 from itertools import accumulate
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-import os
 
 from database import DatabaseUtil
 
@@ -88,3 +89,23 @@ def setup_db():
 
 
 setup_db()
+
+
+def test():
+    db = DatabaseUtil("test.db")
+    df = db.get_processed_df()
+
+    plt.figure(figsize=(15, 7))
+    plt.plot(df.MAX_TEMP, color='red')
+    plt.plot(df.AVG_TEMP, color='grey', linestyle='dashed')
+    plt.plot(df.MIN_TEMP, color='blue')
+    degree_sign = u'\N{DEGREE SIGN}'
+    plt.xlabel('Date [day]')
+    plt.ylabel('Temperature [' + degree_sign + 'C]')
+    plt.title(
+        'Temperature in August 2010 \n (Red: maximum temperature, grey: average temperature, blue: minimum temperature)')
+
+    plt.show()
+
+
+test()
