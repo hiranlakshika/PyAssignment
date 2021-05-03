@@ -21,6 +21,11 @@ class DatabaseUtil:
                          MAX_TEMP           REAL    NOT NULL,
                          MIN_TEMP           REAL     NOT NULL,
                          AVG_TEMP           REAL      NOT NULL);''')
+        conn.execute('''CREATE TABLE WIND_REC
+                                 (ID TEXT PRIMARY KEY     NOT NULL,
+                                 HOUR           INT    NOT NULL,
+                                 WIND_S           REAL     NOT NULL,
+                                 WIND_D           REAL      NOT NULL);''')
         print("Tables created successfully")
 
         conn.close()
@@ -37,6 +42,14 @@ class DatabaseUtil:
         conn = sqlite3.connect(self.db_name)
         conn.execute("INSERT INTO PROCESSED_TEMP (DATE,MAX_TEMP,MIN_TEMP,AVG_TEMP) \
                               VALUES (" + date + ", " + max_temp + ", " + min_temp + ", " + avg_temp + ")")
+
+        conn.commit()
+        conn.close()
+
+    def insert_wind_data(self, temp_id, hour, wind_s, wind_d):
+        conn = sqlite3.connect(self.db_name)
+        conn.execute("INSERT INTO WIND_REC (ID,HOUR,WIND_S,WIND_D) \
+                      VALUES (" + temp_id + ", " + hour + ", " + wind_s + ", " + wind_d + ")")
 
         conn.commit()
         conn.close()
@@ -64,8 +77,8 @@ class DatabaseUtil:
         for c in cursor:
             return c[0]
 
-    def get_processed_df(self):
+    def get_table_as_df(self, table):
         conn = sqlite3.connect(self.db_name)
-        df = pd.read_sql_query("SELECT * FROM PROCESSED_TEMP", conn)
+        df = pd.read_sql_query("SELECT * FROM " + table, conn)
         conn.close()
         return df

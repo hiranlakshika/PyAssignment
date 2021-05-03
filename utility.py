@@ -14,3 +14,4 @@ def read_file(file, column):
 
 
 degree_sign = u'\N{DEGREE SIGN}'
+database_name = "test.db"
