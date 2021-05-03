@@ -1,8 +1,10 @@
 import os
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1 import host_subplot
+
 import utility
 from database import DatabaseUtil
-import matplotlib.pyplot as plt
 
 
 class Assignment7:
@@ -26,11 +28,16 @@ class Assignment7:
         self.__setup_db(region_text_file)
         df = self.__db.get_table_as_df('WIND_REC')
 
-        plt.figure(figsize=(15, 7))
-        plt.plot(df.WIND_S, color='black')
-        plt.plot(df.WIND_D, color='black', linestyle='dotted')
+        host = host_subplot(111)
 
-        plt.xlabel('Time [Hour]')
-        plt.ylabel('Wind Speed [m/s]')
+        par = host.twinx()
+
+        host.set_xlabel("Time [Hour]")
+        host.set_ylabel("Wind Speed [m/s]")
+        par.set_ylabel("Wind Direction [degree]")
+
+        p1, = host.plot(df.HOUR, df.WIND_S, color='black')
+        p2, = par.plot(df.HOUR, df.WIND_D, linestyle="dotted", color='black')
+
         plt.title('Wind direction and speed on August 17, 2010\n(Line: wind speed, dot: wind direction)')
         plt.show()
