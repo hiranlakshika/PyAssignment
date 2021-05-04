@@ -11,11 +11,13 @@ class Assignment7:
     __db = DatabaseUtil(utility.database_name)
 
     def __setup_db(self, region_text_file):
+        if os.path.exists(utility.database_name):
+            os.remove(utility.database_name)
+
         hour = utility.read_file(region_text_file, 4)
         wind_s = utility.read_file(region_text_file, 7)
         wind_d = utility.read_file(region_text_file, 6)
 
-        os.remove(utility.database_name)
         self.__db.create_db()
 
         i = 0
